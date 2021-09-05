@@ -1,0 +1,16 @@
+{
+  "name": "TMSCaptcha",
+  "description": "Extension to autofill captcha on Nepse TMS",
+  "version": "0.1",
+  "manifest_version": 2,
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.nepsetms.com.np/login"],
+      "js": ["content-script.js"]
+    }
+  ],
+  "web_accessible_resources": ["empty.jpg", "sample-j.png"]
+}

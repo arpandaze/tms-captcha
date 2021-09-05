@@ -1,0 +1,19 @@
+{
+  "name": "tms-captcha",
+  "version": "1.0.0",
+  "repository": "git@github.com:arpandaze/tms-captcha.git",
+  "author": "Daze <dazehere@yandex.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "parcel": "^2.0.0-rc.0"
+  },
+  "dependencies": {
+    "crx-hotreload": "^1.0.6",
+    "image-js": "^0.32.0"
+  },
+  "scripts": {
+    "prebuild": "rm -rf dist .cache .parcel-cache",
+    "watch": "NODE_ENV=development cp src/manifest.json dist/ && parcel watch --no-hmr src/{background.js,content-script.js}",
+    "build": "NODE_ENV=production cp src/manifest.json dist/ && parcel build src/{background.js,content-script.js}"
+  }
+}
