@@ -9,8 +9,8 @@
   "content_scripts": [
     {
       "matches": ["https://*.nepsetms.com.np/login"],
-      "js": ["content-script.js"]
+      "js": ["content-script.js", "evaluate.js"]
     }
   ],
-  "web_accessible_resources": ["empty.jpg", "sample-j.png"]
+  "web_accessible_resources": ["assets/empty.jpg", "assets/sample-j.png"]
 }
