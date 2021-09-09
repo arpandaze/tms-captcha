@@ -1,7 +1,8 @@
 {
   "name": "TMSCaptcha",
   "description": "Extension to autofill captcha on Nepse TMS",
-  "version": "0.1",
+  "version": "0.1.0",
+  "author": "Daze <dazehere@yandex.com>",
   "manifest_version": 2,
   "background": {
     "scripts": ["background.js"]
