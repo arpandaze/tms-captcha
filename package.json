@@ -4,7 +4,9 @@
   "repository": "git@github.com:arpandaze/tms-captcha.git",
   "author": "Daze <dazehere@yandex.com>",
   "license": "MIT",
+  "type": "module",
   "devDependencies": {
+    "@parcel/transformer-image": "2.0.0-rc.0",
     "parcel": "^2.0.0-rc.0"
   },
   "dependencies": {
@@ -13,7 +15,8 @@
   },
   "scripts": {
     "prebuild": "rm -rf dist .cache .parcel-cache",
-    "watch": "NODE_ENV=development cp src/manifest.json dist/ && parcel watch --no-hmr src/{background.js,content-script.js}",
-    "build": "NODE_ENV=production cp src/manifest.json dist/ && parcel build src/{background.js,content-script.js}"
+    "watch": "NODE_ENV=development cp src/manifest.json dist/ && cp -r src/assets dist/ && parcel watch --no-hmr src/{background.js,content-script.js,evaluate.js}",
+    "build": "NODE_ENV=production cp src/manifest.json dist/ && parcel build src/{background.js,content-script.js,evaluate.js}",
+    "calibrate": "node scripts/calibrate.js"
   }
 }
