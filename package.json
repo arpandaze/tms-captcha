@@ -14,9 +14,9 @@
     "image-js": "^0.32.0"
   },
   "scripts": {
-    "prebuild": "rm -rf dist .cache .parcel-cache && mkdir dist",
+    "prebuild": "rm -rf dist .cache .parcel-cache release && mkdir dist release",
     "watch": "NODE_ENV=development cp src/manifest.json dist/ && cp -r src/assets dist/ && parcel watch --no-hmr src/{background.js,content-script.js,evaluate.js}",
-    "build": "NODE_ENV=production cp src/manifest.json dist/ && cp -r src/assets dist/ && parcel build src/{background.js,content-script.js,evaluate.js} && mkdir release && cd dist && zip -r ../release/tms-captcha.zip *",
+    "build": "NODE_ENV=production cp src/manifest.json dist/ && cp -r src/assets dist/ && parcel build src/{background.js,content-script.js,evaluate.js} && cd dist && zip -r ../release/tms-captcha.zip *",
     "calibrate": "node scripts/calibrate.js"
   }
 }
