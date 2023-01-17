@@ -1,22 +1,24 @@
 {
   "name": "tms-captcha",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "repository": "git@github.com:arpandaze/tms-captcha.git",
   "author": "Daze <dazehere@yandex.com>",
   "license": "MIT",
-  "type": "module",
   "devDependencies": {
-    "@parcel/transformer-image": "2.0.0-rc.0",
-    "parcel": "^2.0.0-rc.0"
+    "@parcel/config-webextension": "^2.8.2",
+    "@parcel/transformer-image": "^2.8.2",
+    "@types/chrome": "^0.0.208",
+    "@types/node": "^18.11.18",
+    "buffer": "^5.5.0",
+    "parcel": "^2.8.2"
   },
   "dependencies": {
     "crx-hotreload": "^1.0.6",
-    "image-js": "^0.32.0"
+    "image-js": "^0.35.2"
   },
   "scripts": {
-    "prebuild": "rm -rf dist .cache .parcel-cache release && mkdir dist release",
-    "watch": "NODE_ENV=development cp src/manifest.json dist/ && cp -r src/assets dist/ && parcel watch --no-hmr src/{background.js,content-script.js,evaluate.js}",
-    "build": "NODE_ENV=production cp src/manifest.json dist/ && cp -r src/assets dist/ && parcel build src/{background.js,content-script.js,evaluate.js} && cd dist && zip -r ../release/tms-captcha.zip *",
-    "calibrate": "node scripts/calibrate.js"
+    "start": "parcel watch src/manifest.json --host localhost --config @parcel/config-webextension",
+    "build": "parcel build src/manifest.json --config @parcel/config-webextension",
+    "calibrate": "ts-node scripts/calibrate.ts"
   }
 }
