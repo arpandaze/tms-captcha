@@ -1,17 +1,28 @@
 {
   "name": "TMSCaptcha",
   "description": "Extension to autofill captcha on Nepse TMS",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Daze <dazehere@yandex.com>",
   "manifest_version": 2,
   "background": {
-    "scripts": ["background.js"]
+    "scripts": [
+      "background.ts"
+    ]
   },
   "content_scripts": [
     {
-      "matches": ["https://*.nepsetms.com.np/login"],
-      "js": ["content-script.js", "evaluate.js"]
+      "matches": [
+        "https://*.nepsetms.com.np/login"
+      ],
+      "js": [
+        "content-script.ts",
+        "evaluate.ts",
+        "data.json"
+      ]
     }
   ],
-  "web_accessible_resources": ["assets/empty.jpg", "assets/sample-j.png"]
+  "web_accessible_resources": [
+    "assets/empty.jpg",
+    "assets/sample-j.png"
+  ]
 }
