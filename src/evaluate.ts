@@ -1,25 +1,32 @@
 import {Image} from "image-js";
 
-let SAMPLE_J = "assets/sample-j.png";
 let EMPTY = "assets/empty.jpg";
 
 if (typeof window === "object") {
-  SAMPLE_J = chrome.runtime.getURL(SAMPLE_J);
   EMPTY = chrome.runtime.getURL(EMPTY);
 } else {
-  SAMPLE_J = `./src/${SAMPLE_J}`;
   EMPTY = `./src/${EMPTY}`;
 }
 
-async function evaluate_captcha(img: Image): Promise<Array<Array<number>>> {
-  let jd = (await Image.load(SAMPLE_J)).grey();
+/*
+Image is first splitted into individual characters by finding empty line between
+characters.
 
+Then each character is evalauated based on 5 factors:
+  - Average Pixel Value
+  - Horizontal Length of Image
+  - Average Pixel of Vertical Left Half of Image
+  - Average Pixel of Horizontal Top Half of Image
+  - Average Pixel of Horizontal Bottom Half of Image
+*/
+async function evaluate_captcha(img: Image): Promise<Array<Array<number>>> {
   let cleaned = await clean_image(img);
 
   let counter = 0;
   let matrix = [];
   let matrix_list = [];
 
+  // Splitting images by characters
   for (let i = 0; i < 130; i++) {
     let columnEmpty = true;
     for (let j = 0; j < 35; j++) {
@@ -53,38 +60,13 @@ async function evaluate_captcha(img: Image): Promise<Array<Array<number>>> {
     let hAvg = htopavg(temp_img);
     let hbtAvg = hbotavg(temp_img);
 
-    if (average > 165) {
-      let clean_char = to_image(cutoff_j(char_mat)).rotateRight().flipX();
-
-      let clean_char_sum_avg =
-          clean_char.getSum().reduce((acc, val) => {return acc + val}) / 256;
-
-      averages.push([
-        clean_char_sum_avg,
-        vavg(clean_char),
-        htopavg(clean_char),
-        hbotavg(clean_char),
-        clean_char.width,
-      ]);
-
-      let jd_char_sum_avg =
-          jd.getSum().reduce((acc, val) => {return acc + val}) / 256;
-
-      averages.push([
-        jd_char_sum_avg,
-        vavg(jd),
-        htopavg(jd),
-        hbotavg(jd),
-        jd.width,
-      ]);
-    } else {
-      averages.push([ average, vAvg, hAvg, hbtAvg, char_mat.length / 35 ]);
-    }
+    averages.push([ average, vAvg, hAvg, hbtAvg, char_mat.length / 35 ]);
   });
 
   return averages;
 }
 
+// Pixel array to Image
 function to_image(matrix: Array<number>, width = 35) {
   let image = new Image(width, matrix.length / width).grey();
 
@@ -97,6 +79,7 @@ function to_image(matrix: Array<number>, width = 35) {
   return image;
 }
 
+// Subtract the background noise image
 async function clean_image(img: Image) {
   let empty = (await Image.load(EMPTY)).grey();
   let data = img.grey();
@@ -115,33 +98,7 @@ async function clean_image(img: Image) {
   return cleaned;
 }
 
-function cutoff_j(matrix: Array<number>) {
-  matrix.splice(matrix.length - 105, 105);
-  for (let i = 0; i <= 5; i++) {
-    for (let j = 0; j <= 6; j++) {
-      matrix[matrix.length - 35 * j - i - 1] = 0;
-    }
-  }
-
-  let col_counter = 0;
-  for (let i = 0; i < matrix.length / 35; i++) {
-    let columnEmpty = true;
-    for (let j = 0; j < 35; j++) {
-      if (matrix[matrix.length - i * 35 - j - 1]) {
-        columnEmpty = false;
-        break;
-      }
-    }
-    if (!columnEmpty) {
-      break;
-    }
-    col_counter++;
-  }
-
-  matrix.splice(matrix.length - col_counter * 35, col_counter * 35);
-  return matrix;
-}
-
+// Average pixel value of horizontal top half
 function htopavg(char_img: Image) {
   let temp_img = char_img.crop({
     y : 0,
@@ -153,6 +110,7 @@ function htopavg(char_img: Image) {
   return (temp_img.getSum().reduce((acc, val) => acc + val) / 256);
 }
 
+// Average pixel value of horizontal bottom half
 function hbotavg(char_img: Image) {
   let temp_img = char_img.crop({
     y : Math.ceil(char_img.height / 2 + 1),
@@ -164,6 +122,7 @@ function hbotavg(char_img: Image) {
   return (temp_img.getSum().reduce((acc, val) => acc + val) / 256);
 }
 
+// Average pixel value of vertical half
 function vavg(char_img: Image) {
   let transformed_image = char_img.rotateRight();
 
