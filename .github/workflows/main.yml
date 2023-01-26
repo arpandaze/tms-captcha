@@ -1,0 +1,49 @@
+name: "Release"
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  Build:
+    name: "Tagged Release"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.3.0
+        with:
+          lfs: true
+          fetch-depth: 0
+        
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+        
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.6.0
+            
+      - name: "Install Dependencies"
+        run: |
+          npm install --global yarn typescript ts-node
+          yarn install
+      
+      - name: "Calibrate"
+        run: yarn calibrate
+      
+      - name: "Build"
+        run: yarn build
+      
+      - name: "Create Zip"
+        run: |
+          cd dist
+          zip -r TMSCaptcha_${{ env.RELEASE_VERSION }}.zip *
+          mv TMSCaptcha_${{ env.RELEASE_VERSION }}.zip ..
+          cd ..
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          files: |
+            TMSCaptcha_${{ env.RELEASE_VERSION }}.zip
