@@ -19,6 +19,7 @@
   "scripts": {
     "start": "parcel watch src/manifest.json --host localhost --config @parcel/config-webextension",
     "build": "parcel build src/manifest.json --config @parcel/config-webextension",
-    "calibrate": "ts-node scripts/calibrate.ts"
+    "calibrate": "ts-node scripts/calibrate.ts",
+    "test": "ts-node scripts/test.ts"
   }
 }

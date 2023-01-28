@@ -17,7 +17,8 @@
       "js": [
         "content-script.ts",
         "evaluate.ts",
-        "data.json"
+        "data/bold_data.json",
+        "data/slim_data.json"
       ]
     }
   ],

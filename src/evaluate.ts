@@ -1,11 +1,96 @@
 import {Image} from "image-js";
 
+import DATA_BOLD from "./data/bold_data.json"
+import DATA_SLIM from "./data/slim_data.json"
+import {ResultTypes, SolveResult} from "./interface";
+
 let EMPTY = "assets/empty.jpg";
+let DATA_PATH = "data";
 
 if (typeof window === "object") {
   EMPTY = chrome.runtime.getURL(EMPTY);
+  DATA_PATH = chrome.runtime.getURL(DATA_PATH);
 } else {
   EMPTY = `./src/${EMPTY}`;
+  DATA_PATH = `./src/${DATA_PATH}`;
+}
+
+const FACTORS = [ 1, 3, 2, 8, 3 ];
+
+enum Kind {
+  Bold,
+  Slim
+}
+
+async function solve_captcha(
+    captcha_uri: string,
+    kind?: Kind,
+    ): Promise<SolveResult> {
+  let captcha_value = null;
+
+  let data: {[key: string]: number[]};
+
+  if (kind === Kind.Bold || !kind) {
+    data = DATA_BOLD;
+  } else {
+    data = DATA_SLIM;
+  }
+
+  let captcha_img = await Image.load(captcha_uri);
+  captcha_value = await evaluate_captcha(captcha_img);
+
+  let captcha = "";
+
+  for (let i = 0; i < captcha_value.length; i++) {
+    let item = captcha_value[i];
+    let sim: Array<[ string, number ]> =
+        Object.entries(data).map((character) => {
+          let abs_sum = 0;
+
+          item.map((indv_property, index) => {
+            abs_sum +=
+                FACTORS[index] * Math.abs(character[1][index] - indv_property);
+          });
+
+          return [ character[0], abs_sum ];
+        });
+
+    let sorted_values = sim.sort((a, b) => a[1] - b[1]);
+
+    if (sorted_values[0][1] > 60 ||
+        sorted_values[1][1] - sorted_values[0][1] < 5) {
+      if (kind) {
+        return {
+          type : ResultTypes.LowConfidence,
+          value : captcha,
+        };
+      } else {
+        return solve_captcha(captcha_uri, Kind.Slim)
+      }
+    }
+
+    captcha += sorted_values[0][0];
+  }
+
+  if (captcha_value.length == 6) {
+    if (typeof window === "object") {
+      let captcha_field =
+          document?.getElementById("captchaEnter") as HTMLInputElement;
+
+      captcha_field.value = captcha;
+
+      captcha_field?.dispatchEvent(new Event("input"));
+    }
+
+    return {type : ResultTypes.Success, value : captcha};
+
+  } else {
+
+    return {
+      type : ResultTypes.InvalidLength,
+      value : captcha,
+    };
+  }
 }
 
 /*
@@ -136,4 +221,4 @@ function vavg(char_img: Image) {
   return (transformed_image.getSum().reduce((acc, val) => acc + val) / 256);
 }
 
-export {evaluate_captcha, clean_image};
+export {solve_captcha, evaluate_captcha};
