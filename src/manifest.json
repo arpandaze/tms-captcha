@@ -3,11 +3,10 @@
   "description": "Extension to autofill captcha on Nepse TMS",
   "version": "0.3.0",
   "author": "Daze <dazehere@yandex.com>",
-  "manifest_version": 2,
+  "manifest_version": 3,
   "background": {
-    "scripts": [
-      "background.ts"
-    ]
+    "service_worker": "background.ts",
+    "type": "module"
   },
   "content_scripts": [
     {
@@ -23,7 +22,13 @@
     }
   ],
   "web_accessible_resources": [
-    "assets/empty.jpg",
-    "assets/sample-j.png"
+    {
+      "resources": [
+        "assets/empty.jpg"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
   ]
 }
