@@ -8,8 +8,15 @@ let EMPTY = "assets/empty.jpg";
 let DATA_PATH = "data";
 
 if (typeof window === "object") {
-  EMPTY = chrome.runtime.getURL(EMPTY);
-  DATA_PATH = chrome.runtime.getURL(DATA_PATH);
+  if (typeof browser !== "undefined") {
+    // Firefox
+    EMPTY = browser.runtime.getURL(EMPTY);
+    DATA_PATH = browser.runtime.getURL(DATA_PATH);
+  } else {
+    // Chrome
+    EMPTY = chrome.runtime.getURL(EMPTY);
+    DATA_PATH = chrome.runtime.getURL(DATA_PATH);
+  }
 } else {
   EMPTY = `./src/${EMPTY}`;
   DATA_PATH = `./src/${DATA_PATH}`;

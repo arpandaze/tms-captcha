@@ -8,6 +8,7 @@
     "@parcel/config-webextension": "^2.8.2",
     "@parcel/transformer-image": "^2.8.2",
     "@types/chrome": "^0.0.208",
+    "@types/firefox-webext-browser": "^111.0.1",
     "@types/node": "^18.11.18",
     "buffer": "^5.5.0",
     "parcel": "^2.8.2"
@@ -17,9 +18,13 @@
     "image-js": "^0.35.2"
   },
   "scripts": {
-    "start": "parcel watch src/manifest.json --host localhost --config @parcel/config-webextension",
-    "build": "parcel build src/manifest.json --config @parcel/config-webextension",
+    "start:chrome": "parcel watch src/manifest.chrome.json --host localhost --config @parcel/config-webextension",
+    "start:firefox": "parcel watch src/manifest.firefox.json --host localhost --config @parcel/config-webextension",
+    "build:chrome": "rm -rf dist-chrome && parcel build src/manifest.chrome.json --dist-dir dist-chrome --no-content-hash --no-source-maps && cp src/manifest.chrome.json dist-chrome/manifest.json",
+    "build:firefox": "rm -rf dist-firefox && parcel build src/manifest.firefox.json --dist-dir dist-firefox --no-content-hash --no-source-maps && cp src/manifest.firefox.json dist-firefox/manifest.json",
+    "build:all": "yarn build:chrome && yarn build:firefox",
     "calibrate": "ts-node scripts/calibrate.ts",
     "test": "ts-node scripts/test.ts"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
