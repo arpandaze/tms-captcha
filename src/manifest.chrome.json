@@ -5,7 +5,7 @@
   "author": "Daze <dazehere@yandex.com>",
   "manifest_version": 3,
   "background": {
-    "service_worker": "background.ts",
+    "service_worker": "background.chrome.js",
     "type": "module"
   },
   "content_scripts": [
