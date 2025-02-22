@@ -11,7 +11,8 @@
     "@types/firefox-webext-browser": "^111.0.1",
     "@types/node": "^18.11.18",
     "buffer": "^5.5.0",
-    "parcel": "^2.8.2"
+    "parcel": "^2.8.2",
+    "web-ext": "^8.4.0"
   },
   "dependencies": {
     "crx-hotreload": "^1.0.6",
@@ -21,8 +22,12 @@
     "start:chrome": "parcel watch src/manifest.chrome.json --host localhost --config @parcel/config-webextension",
     "start:firefox": "parcel watch src/manifest.firefox.json --host localhost --config @parcel/config-webextension",
     "build:chrome": "rm -rf dist-chrome && parcel build src/manifest.chrome.json --dist-dir dist-chrome --no-content-hash --no-source-maps && cp src/manifest.chrome.json dist-chrome/manifest.json",
-    "build:firefox": "rm -rf dist-firefox && parcel build src/manifest.firefox.json --dist-dir dist-firefox --no-content-hash --no-source-maps && cp src/manifest.firefox.json dist-firefox/manifest.json",
+    "build:firefox": "bash scripts/build-firefox.sh",
     "build:all": "yarn build:chrome && yarn build:firefox",
+    "zip:firefox": "cd dist-firefox && web-ext build --overwrite-dest --artifacts-dir=../web-ext-artifacts",
+    "zip:chrome": "cd dist-chrome && web-ext build --overwrite-dest --artifacts-dir=../web-ext-artifacts",
+    "zip:all": "yarn zip:chrome && yarn zip:firefox",
+    "publish:firefox": "yarn build:firefox && yarn zip:firefox && cd dist-firefox && web-ext sign --api-key=$MOZILLA_JWT_ISSUER --api-secret=$MOZILLA_JWT_SECRET --channel=listed --artifacts-dir=../web-ext-artifacts",
     "calibrate": "ts-node scripts/calibrate.ts",
     "test": "ts-node scripts/test.ts"
   },
