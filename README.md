@@ -15,4 +15,22 @@ Demo
 # Building:
 * Clone the repository!<br/>
 * Install the dependencies with: `yarn install`<br/>
-* Build with: `yarn build`<br/>
+* Build Chrome version: `yarn build:chrome`<br/>
+* Build Firefox version: `yarn build:firefox`<br/>
+* Build both versions: `yarn build:all`<br/>
+
+# Publishing to Firefox Add-ons:
+To publish the extension to Firefox Add-ons:
+
+1. Get your API credentials from [AMO's API Keys page](https://addons.mozilla.org/en-US/developers/addon/api/key/)
+2. Set environment variables:
+   ```bash
+   export MOZILLA_JWT_ISSUER="your-jwt-issuer"
+   export MOZILLA_JWT_SECRET="your-jwt-secret"
+   ```
+3. Run the publish command:
+   ```bash
+   yarn publish:firefox
+   ```
+
+The extension will be built, signed, and submitted to Firefox Add-ons for review.
